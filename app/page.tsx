@@ -132,7 +132,7 @@ function ReplyPreview() {
         </div>
       </div>
       <figcaption>
-        Example content. Your keywords, your message, your links.
+        Example content. You set your own keywords, message, and links.
       </figcaption>
     </figure>
   );
@@ -222,8 +222,8 @@ export default async function Home() {
               into private replies.
             </h1>
             <p className="or-lead">
-              Someone comments a keyword on your post or reel, OpenReply sends
-              them a DM automatically. Free, open source, self-hosted.
+              When someone comments a keyword on your post or reel, OpenReply
+              sends them a DM automatically. Free, open source, self-hosted.
             </p>
             <div className="or-actions">
               <a className="or-button or-button-primary" href={SETUP_DOCS_URL}>
@@ -233,9 +233,6 @@ export default async function Home() {
                 See how it works <span aria-hidden="true">↓</span>
               </a>
             </div>
-            <p className="or-hero-note">
-              Free software. Self-hosted. Your infrastructure.
-            </p>
             <SponsorCredit placement="landing-hero" />
           </div>
           <ReplyPreview />
@@ -252,8 +249,8 @@ export default async function Home() {
               <div>
                 <h2>How it works</h2>
                 <p>
-                  Send a product link, share a resource, or deliver your latest
-                  guide. You decide what starts the conversation and what
+                  Send a product link or your latest guide when someone
+                  comments. You decide what starts the conversation and what
                   happens next.
                 </p>
               </div>
@@ -284,10 +281,7 @@ export default async function Home() {
             </section>
             <section className="or-technical">
               <div>
-                <h2>
-                  Open code.
-                  <br />A system you can inspect.
-                </h2>
+                <h2>Open code you can inspect.</h2>
                 <p>
                   OpenReply owns the campaigns, keyword matching, queues,
                   retries, logs, and inbox. Your connection provider handles the
@@ -358,8 +352,8 @@ export default async function Home() {
                     <span>Direct connection</span>
                   </div>
                   <p>
-                    Keep the existing direct Meta integration. Create your app,
-                    configure Instagram Login and webhooks, and manage platform
+                    Connect directly through Meta. Create your app, configure
+                    Instagram Login and webhooks, and manage platform
                     credentials yourself.
                   </p>
                   <ul>

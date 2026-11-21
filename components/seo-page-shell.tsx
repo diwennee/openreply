@@ -146,7 +146,7 @@ export default function SeoPageShell({ config }: { config: SeoPageConfig }) {
           <div>
             <p className="text-sm font-bold uppercase text-cyan-200">FAQ</p>
             <h2 className="mt-3 text-4xl font-black text-white">
-              Search questions, answered clearly
+              Common questions
             </h2>
           </div>
           <div className="grid gap-3">
@@ -166,8 +166,9 @@ export default function SeoPageShell({ config }: { config: SeoPageConfig }) {
             Turn the next high-intent comment into a private reply
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-zinc-300">
-            OpenReply is built for Instagram professional accounts, official
-            Meta private replies, and campaign reporting teams can show clients.
+            OpenReply works with Instagram professional accounts and official
+            Meta private replies, and its campaign reports are ones you can show
+            clients.
           </p>
           <Link
             href="/login"
