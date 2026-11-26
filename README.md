@@ -2,7 +2,12 @@
 
 <div align="center">
 
-# OpenReply
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="public/brand/openreply-lockup-white.svg">
+    <img src="public/brand/openreply-lockup-ink.svg" alt="OpenReply" width="320">
+  </picture>
+</h1>
 
 Open-sourced ManyChat for Instagram comment-to-DM automation.
 
