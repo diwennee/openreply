@@ -1,0 +1,7 @@
+# Used by docker-compose.prod.yml. Caddy gets and renews the certificate for
+# OPENREPLY_DOMAIN by itself; the DNS record must point at this host and ports
+# 80 and 443 must be open before the first start.
+{$OPENREPLY_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy web:3000
+}
