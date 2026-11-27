@@ -19,12 +19,29 @@ function createPrismaClient() {
   // exhausted pool. The cap is per-environment: small on Vercel, a bit higher
   // on the worker, which is a single long-lived process.
   return new PrismaClient({
-    adapter: new PrismaPg({
-      connectionString: databaseUrl,
-      max: Number(process.env.DB_POOL_MAX ?? 3),
-      idleTimeoutMillis: 10_000,
-    }),
+    adapter: new PrismaPg(
+      {
+        connectionString: databaseUrl,
+        max: Number(process.env.DB_POOL_MAX ?? 3),
+        idleTimeoutMillis: 10_000,
+      },
+      { schema: schemaFromUrl(databaseUrl) }
+    ),
   });
+}
+
+/**
+ * The `?schema=` of the connection string, which `prisma migrate` honors but
+ * the pg driver adapter does not: without it every query names "public", so a
+ * database migrated into another schema (a Postgres shared by several apps, see
+ * deploy/postgres-roles.sql) fails at runtime with "relation does not exist".
+ */
+export function schemaFromUrl(databaseUrl: string): string | undefined {
+  try {
+    return new URL(databaseUrl).searchParams.get("schema") || undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 export function getPrisma(): PrismaClient {
