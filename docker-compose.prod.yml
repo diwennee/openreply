@@ -1,0 +1,110 @@
+# OpenReply — production stack for a small VM (1 GB, e.g. AWS t4g.micro) with
+# Postgres and Redis running elsewhere.
+#
+#   docker compose -f docker-compose.prod.yml up -d
+#
+# What runs here: the web app, the DM worker, the cron scheduler, and Caddy in
+# front for HTTPS (Meta's OAuth redirect and webhooks need it). Only Caddy
+# publishes ports; the app is reachable on 80/443 and nowhere else.
+#
+# Build the image somewhere else. `next build` needs well over 1 GB and dies on
+# the VM itself, swap or not. From an Apple Silicon Mac the image is arm64
+# already, which is what Graviton (t4g) runs:
+#
+#   docker build -t openreply-app:latest .
+#   docker save openreply-app:latest | gzip | ssh <host> 'gunzip | docker load'
+#
+# (From an x86 machine: `docker buildx build --platform linux/arm64 ...`.)
+# Or push it to a registry and set OPENREPLY_IMAGE.
+#
+# Everything reads `.env` next to this file. On top of .env.example it needs:
+#   OPENREPLY_DOMAIN       the public hostname Caddy gets a certificate for
+#   MIGRATE_DATABASE_URL   optional: a role that may run migrations, when
+#                          DATABASE_URL's role may only read and write rows
+#                          (see deploy/postgres-roles.sql)
+#   DB_CA_FILE             optional: CA certificate of the Postgres server, for
+#                          verified TLS; mounted at /certs/db-ca.crt
+#
+# Memory: the limits below add up to ~800 MB, which leaves the OS its share of
+# 1 GB. Add 1-2 GB of swap on the VM anyway, as insurance against peaks.
+
+x-app: &app
+  image: ${OPENREPLY_IMAGE:-openreply-app:latest}
+  restart: unless-stopped
+  env_file: .env
+  volumes:
+    - ${DB_CA_FILE:-/dev/null}:/certs/db-ca.crt:ro
+  logging: &logging
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  web:
+    <<: *app
+    # Migrations run at start, never at build (the database is not reachable
+    # from a build). The binaries are called directly rather than through
+    # `npm run`, which keeps an extra ~50 MB npm process alive per service.
+    command:
+      - sh
+      - -c
+      - DATABASE_URL="$${MIGRATE_DATABASE_URL:-$$DATABASE_URL}" node_modules/.bin/prisma migrate deploy && exec node_modules/.bin/next start
+    environment:
+      NODE_OPTIONS: --max-old-space-size=256
+    expose:
+      - "3000"
+    mem_limit: 420m
+    healthcheck:
+      # Liveness only: /api/health answers 503 while the worker heartbeat is
+      # missing, and that must not hold up the web app or cron.
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(() => process.exit(0), () => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  worker:
+    <<: *app
+    # Same as `npm run worker`, minus npm.
+    command: ["node", "--import", "tsx", "worker/dm-worker.ts"]
+    environment:
+      NODE_OPTIONS: --max-old-space-size=192
+      # One long-lived process: a few more connections than the web app.
+      DB_POOL_MAX: ${WORKER_DB_POOL_MAX:-5}
+    mem_limit: 300m
+    depends_on:
+      web:
+        condition: service_healthy
+
+  cron:
+    <<: *app
+    command: ["sh", "scripts/cron.sh"]
+    environment:
+      CRON_BASE_URL: http://web:3000
+    mem_limit: 32m
+    depends_on:
+      web:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      OPENREPLY_DOMAIN: ${OPENREPLY_DOMAIN:?set OPENREPLY_DOMAIN in .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    mem_limit: 64m
+    logging: *logging
+    depends_on:
+      - web
+
+volumes:
+  caddy_data:
+  caddy_config:
