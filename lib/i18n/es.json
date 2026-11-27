@@ -389,7 +389,6 @@
   "Worker health": "Estado del worker",
   "Workspace": "Espacio de trabajo",
   "Workspace invitation": "Invitación al espacio de trabajo",
-  "Workspace-scoped, read-only keys. No key can modify campaigns or send messages. Only admins and owners can manage keys.": "Claves de solo lectura limitadas al espacio de trabajo. Ninguna clave puede modificar campañas ni enviar mensajes. Solo los administradores y propietarios pueden gestionar claves.",
   "Write a message": "Escribe un mensaje",
   "Write a reply…  (Enter to send, Shift+Enter for a new line)": "Escribe una respuesta…  (Intro para enviar, Mayús+Intro para una línea nueva)",
   "You declined the permission prompt on Instagram. Start again and accept all requested permissions.": "Rechazaste la solicitud de permisos en Instagram. Vuelve a empezar y acepta todos los permisos solicitados.",
@@ -468,5 +467,14 @@
   "{name} Campaign Report": "Informe de la campaña {name}",
   "{type} post": "Publicación {type}",
   "”": "”",
-  "← Campaigns": "← Campañas"
+  "← Campaigns": "← Campañas",
+  "Read campaigns, posts and DM logs": "Leer campañas, publicaciones y registros de mensajes",
+  "Create, edit, pause and delete campaigns (new campaigns start paused)": "Crear, editar, pausar y eliminar campañas (las nuevas campañas empiezan en pausa)",
+  "Turn campaigns on, so they start sending messages": "Activar campañas para que empiecen a enviar mensajes",
+  "Create a key for {days} days that can turn campaigns on? Anyone with this key can make your account send messages.": "¿Crear una clave de {days} días que pueda activar campañas? Cualquiera con esta clave podrá hacer que tu cuenta envíe mensajes.",
+  "Create a key for {days} days that can change campaigns? Anyone with this key can edit and delete your campaigns.": "¿Crear una clave de {days} días que pueda modificar campañas? Cualquiera con esta clave podrá editar y eliminar tus campañas.",
+  "Workspace-scoped keys for the API and MCP server. Keys are read-only unless you allow more. Only admins and owners can manage keys.": "Claves del espacio de trabajo para la API y el servidor MCP. Las claves son de solo lectura salvo que permitas más. Solo los administradores y propietarios pueden gestionar claves.",
+  "Permissions": "Permisos",
+  "Editing a live campaign also needs campaigns:activate. Without it, a key has to pause the campaign first.": "Editar una campaña activa también requiere campaigns:activate. Sin ese permiso, la clave debe pausar primero la campaña.",
+  "Last used: {date}": "Último uso: {date}"
 }
